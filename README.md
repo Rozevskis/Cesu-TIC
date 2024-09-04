@@ -11,7 +11,7 @@ A simple data input form with automated tests.
 
 1. **Clone the Repository:**
     ```sh
-    git clone https://github.com/Rozevskis/Cesu-TIC.git
+    git clone https://github.com/Rozevskis/PHPUnit-Cesu-TIC.git
     cd Cesu-TIC
     ```
 
