@@ -1,0 +1,1 @@
+{"version":1,"defects":{"DatabaseInsertionTest::testSuccessfulEntryCreation":7},"times":{"DatabaseInsertionTest::testSuccessfulEntryCreation":0.012,"FormValidationTest::testInvalidCharacters":0,"VisitorTest::testCreateEntry":0.002,"VisitorTest::testDeleteEntry":0,"CreationDeletionTest::testCreateEntry":0.005,"CreationDeletionTest::testDeleteEntry":0}}

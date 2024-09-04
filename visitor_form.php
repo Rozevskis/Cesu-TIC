@@ -34,60 +34,68 @@
     $errors = [];
     $success = false;
 
-    // Check if the form is submitted
     if ($_SERVER["REQUEST_METHOD"] == "POST") {
-        // Retrieve and sanitize form data
-        $origin = htmlspecialchars(trim($_POST['origin']));
-        $destination = htmlspecialchars(trim($_POST['destination']));
-        $arrivalMethod = htmlspecialchars(trim($_POST['arrivalMethod']));
-        $infoChannel = htmlspecialchars(trim($_POST['infoChannel']));
-        $interestTopic = htmlspecialchars(trim($_POST['interestTopic']));
+        if (isset($_POST['delete_id'])) {
+            // Handle delete request
+            $delete_id = intval($_POST['delete_id']);
+            $deleteStmt = $db->prepare("DELETE FROM visitors WHERE id = :id");
+            $deleteStmt->bindValue(':id', $delete_id, SQLITE3_INTEGER);
+            $deleteStmt->execute();
+        } else {
+            // Retrieve and sanitize form data
+            $origin = htmlspecialchars(trim($_POST['origin']));
+            $destination = htmlspecialchars(trim($_POST['destination']));
+            $arrivalMethod = htmlspecialchars(trim($_POST['arrivalMethod']));
+            $infoChannel = htmlspecialchars(trim($_POST['infoChannel']));
+            $interestTopic = htmlspecialchars(trim($_POST['interestTopic']));
 
-        // Validation: Check if required fields are not empty
-        if (empty($origin)) {
-            $errors[] = "Lūdzu, ievadiet izcelsmes valsti vai pilsētu.";
-        } elseif (!preg_match("/^[a-zA-ZāčēģīķļņōŗśšūžĀČĒĢĪĶĻŅŌŖŚŠŪŽ\s]+$/u", $origin)) {
-            $errors[] = "Izcelsmes valsts vai pilsēta drīkst saturēt tikai burtus un atstarpes.";
-        }
 
-        if (empty($destination)) {
-            $errors[] = "Lūdzu, ievadiet galamērķi.";
-        } elseif (!preg_match("/^[a-zA-ZāčēģīķļņōŗśšūžĀČĒĢĪĶĻŅŌŖŚŠŪŽ\s]+$/u", $destination)) {
-            $errors[] = "Galamērķis drīkst saturēt tikai burtus un atstarpes.";
-        }
+            // Validation: Check if required fields are not empty
+            if (empty($origin)) {
+                $errors[] = "Lūdzu, ievadiet izcelsmes valsti vai pilsētu.";
+            } elseif (!preg_match("/^[a-zA-ZāčēģīķļņōŗśšūžĀČĒĢĪĶĻŅŌŖŚŠŪŽ\s]+$/u", $origin)) {
+                $errors[] = "Izcelsmes valsts vai pilsēta drīkst saturēt tikai burtus un atstarpes.";
+            }
 
-        if (empty($arrivalMethod)) {
-            $errors[] = "Lūdzu, izvēlieties ierašanās veidu.";
-        }
+            if (empty($destination)) {
+                $errors[] = "Lūdzu, ievadiet galamērķi.";
+            } elseif (!preg_match("/^[a-zA-ZāčēģīķļņōŗśšūžĀČĒĢĪĶĻŅŌŖŚŠŪŽ\s]+$/u", $destination)) {
+                $errors[] = "Galamērķis drīkst saturēt tikai burtus un atstarpes.";
+            }
 
-        if (empty($infoChannel)) {
-            $errors[] = "Lūdzu, ievadiet informācijas kanālu.";
-        } elseif (!preg_match("/^[a-zA-ZāčēģīķļņōŗśšūžĀČĒĢĪĶĻŅŌŖŚŠŪŽ\s]+$/u", $infoChannel)) {
-            $errors[] = "Informācijas kanāls drīkst saturēt tikai burtus un atstarpes.";
-        }
+            if (empty($arrivalMethod)) {
+                $errors[] = "Lūdzu, izvēlieties ierašanās veidu.";
+            }
 
-        if (empty($interestTopic)) {
-            $errors[] = "Lūdzu, ievadiet interešu tēmas.";
-        } elseif (!preg_match("/^[a-zA-ZāčēģīķļņōŗśšūžĀČĒĢĪĶĻŅŌŖŚŠŪŽ\s]+$/u", $interestTopic)) {
-            $errors[] = "Interešu tēmas drīkst saturēt tikai burtus un atstarpes.";
-        }
+            if (empty($infoChannel)) {
+                $errors[] = "Lūdzu, ievadiet informācijas kanālu.";
+            } elseif (!preg_match("/^[a-zA-ZāčēģīķļņōŗśšūžĀČĒĢĪĶĻŅŌŖŚŠŪŽ\s]+$/u", $infoChannel)) {
+                $errors[] = "Informācijas kanāls drīkst saturēt tikai burtus un atstarpes.";
+            }
 
-        // If no validation errors, proceed with inserting data
-        if (empty($errors)) {
-            // Prepare an SQL statement to insert data
-            $stmt = $db->prepare("INSERT INTO visitors (origin, destination, arrivalMethod, infoChannel, interestTopic) 
-                                VALUES (:origin, :destination, :arrivalMethod, :infoChannel, :interestTopic)");
-            $stmt->bindValue(':origin', $origin, SQLITE3_TEXT);
-            $stmt->bindValue(':destination', $destination, SQLITE3_TEXT);
-            $stmt->bindValue(':arrivalMethod', $arrivalMethod, SQLITE3_TEXT);
-            $stmt->bindValue(':infoChannel', $infoChannel, SQLITE3_TEXT);
-            $stmt->bindValue(':interestTopic', $interestTopic, SQLITE3_TEXT);
+            if (empty($interestTopic)) {
+                $errors[] = "Lūdzu, ievadiet interešu tēmas.";
+            } elseif (!preg_match("/^[a-zA-ZāčēģīķļņōŗśšūžĀČĒĢĪĶĻŅŌŖŚŠŪŽ\s]+$/u", $interestTopic)) {
+                $errors[] = "Interešu tēmas drīkst saturēt tikai burtus un atstarpes.";
+            }
 
-            // Execute the prepared statement
-            if ($stmt->execute()) {
-                $success = true;
-            } else {
-                $errors[] = "Kļūda, pievienojot datus.";
+            // If no validation errors, proceed with inserting data
+            if (empty($errors)) {
+                // Prepare an SQL statement to insert data
+                $stmt = $db->prepare("INSERT INTO visitors (origin, destination, arrivalMethod, infoChannel, interestTopic) 
+                                    VALUES (:origin, :destination, :arrivalMethod, :infoChannel, :interestTopic)");
+                $stmt->bindValue(':origin', $origin, SQLITE3_TEXT);
+                $stmt->bindValue(':destination', $destination, SQLITE3_TEXT);
+                $stmt->bindValue(':arrivalMethod', $arrivalMethod, SQLITE3_TEXT);
+                $stmt->bindValue(':infoChannel', $infoChannel, SQLITE3_TEXT);
+                $stmt->bindValue(':interestTopic', $interestTopic, SQLITE3_TEXT);
+
+                // Execute the prepared statement
+                if ($stmt->execute()) {
+                    $success = true;
+                } else {
+                    $errors[] = "Kļūda, pievienojot datus.";
+                }
             }
         }
     }
@@ -197,6 +205,14 @@
                 echo "<td class='px-6 py-4 whitespace-nowrap text-sm text-gray-900'>" . htmlspecialchars($row['arrivalMethod']) . "</td>";
                 echo "<td class='px-6 py-4 whitespace-nowrap text-sm text-gray-900'>" . htmlspecialchars($row['infoChannel']) . "</td>";
                 echo "<td class='px-6 py-4 whitespace-nowrap text-sm text-gray-900'>" . htmlspecialchars($row['interestTopic']) . "</td>";
+                echo "<td class='px-6 py-4 whitespace-nowrap text-sm text-gray-900'>
+                <form method='post' action='" . htmlspecialchars($_SERVER["PHP_SELF"]) . "'>
+                    <input type='hidden' name='delete_id' value='" . htmlspecialchars($row['id']) . "'>
+                    <button type='submit' class='bg-red-500 text-white font-bold py-1 px-2 rounded hover:bg-red-600 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-opacity-50'>
+                        Dzēst
+                    </button>
+                </form>
+                </td>";
                 echo "</tr>";
             }
             ?>
