@@ -48,6 +48,12 @@ class FormValidationTest extends TestCase
             $errors[] = "Interešu tēmas drīkst saturēt tikai burtus un atstarpes.";
         }
 
+        // Print out the expected and actual results
+        echo "Expected error count: 4, Actual error count: " . count($errors) . PHP_EOL;
+        foreach ($errors as $error) {
+            echo "Error: $error" . PHP_EOL;
+        }
+
         $this->assertCount(4, $errors); // Expect 4 errors for invalid input
     }
 }
